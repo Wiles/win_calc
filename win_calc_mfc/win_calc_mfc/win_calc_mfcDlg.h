@@ -2,6 +2,7 @@
 //
 
 #pragma once
+#include <string>
 
 
 // Cwin_calc_mfcDlg dialog
@@ -33,6 +34,7 @@ public:
 	afx_msg void SetDecimal();
 	afx_msg void SetHexadecimal();
 	afx_msg void AppendNumber(TCHAR *str);
+	afx_msg void DisplayOperator(TCHAR *str);
 
 	afx_msg void OnBnClickedBase10();
 	afx_msg void OnBnClickedBase2();
@@ -58,6 +60,18 @@ public:
 
 private:
 	int current_base;
+	int open_brackets;
+	std::wstring formula;
+	BOOL op;
+	BOOL eq;
+
 public:
 	afx_msg void OnBnClickedButtonSign();
+	afx_msg void OnBnClickedButtonLbracket();
+	afx_msg void OnBnClickedButtonRbracket2();
+	afx_msg void OnBnClickedButtonAdd();
+	afx_msg void OnBnClickedButtonMul();
+	afx_msg void OnBnClickedButtonSub();
+	afx_msg void OnBnClickedButtonDiv();
+	afx_msg void OnBnClickedButtonEqual();
 };
