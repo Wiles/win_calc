@@ -87,6 +87,13 @@ BEGIN_MESSAGE_MAP(Cwin_calc_mfcDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_E, &Cwin_calc_mfcDlg::OnBnClickedButtonE)
 	ON_BN_CLICKED(IDC_BUTTON_F, &Cwin_calc_mfcDlg::OnBnClickedButtonF)
 	ON_BN_CLICKED(IDC_BUTTON_SIGN, &Cwin_calc_mfcDlg::OnBnClickedButtonSign)
+	ON_BN_CLICKED(IDC_BUTTON_LBRACKET, &Cwin_calc_mfcDlg::OnBnClickedButtonLbracket)
+	ON_BN_CLICKED(IDC_BUTTON_RBRACKET2, &Cwin_calc_mfcDlg::OnBnClickedButtonRbracket2)
+	ON_BN_CLICKED(IDC_BUTTON_ADD, &Cwin_calc_mfcDlg::OnBnClickedButtonAdd)
+	ON_BN_CLICKED(IDC_BUTTON_MUL, &Cwin_calc_mfcDlg::OnBnClickedButtonMul)
+	ON_BN_CLICKED(IDC_BUTTON_SUB, &Cwin_calc_mfcDlg::OnBnClickedButtonSub)
+	ON_BN_CLICKED(IDC_BUTTON_DIV, &Cwin_calc_mfcDlg::OnBnClickedButtonDiv)
+	ON_BN_CLICKED(IDC_BUTTON_EQUAL, &Cwin_calc_mfcDlg::OnBnClickedButtonEqual)
 END_MESSAGE_MAP()
 
 
@@ -124,6 +131,9 @@ BOOL Cwin_calc_mfcDlg::OnInitDialog()
 	((CEdit*)GetDlgItem(IDC_EDIT))->SetWindowTextW(_T("0"));
 	SetDecimal();
 	current_base = 10;
+	open_brackets = 0;
+	op = TRUE;
+	eq = FALSE;
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -244,6 +254,16 @@ void Cwin_calc_mfcDlg::AppendNumber(TCHAR *str)
 	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_EDIT);
 	TCHAR edit[512];
 	pEdit->GetWindowTextW(edit, ((sizeof edit) -1 ));
+
+	if (eq == TRUE)
+	{
+		eq = FALSE;
+		((CEdit*)GetDlgItem(IDC_EDIT))->SetWindowTextW(_T("0"));
+		((CEdit*)GetDlgItem(IDC_DISPLAY))->SetWindowTextW(_T(""));
+		open_brackets = 0;
+		formula = _T("");
+	}
+
 	if (wcscmp(edit, _T("0")) != 0)
 	{
 		wcscat(edit, str);
@@ -251,9 +271,10 @@ void Cwin_calc_mfcDlg::AppendNumber(TCHAR *str)
 	}
 	else
 	{
-	// if the current value is zero, replace it with a number!
+		// if the current value is zero, replace it with a number!
 		pEdit->SetWindowTextW(str);
 	}
+	op = FALSE;
 }
 
 
@@ -264,7 +285,7 @@ void Cwin_calc_mfcDlg::OnBnClickedBase10()
 	SetDecimal();
 	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_EDIT);
 	TCHAR edit[512];
-	int n = 414;
+	int n = 0;
 	TCHAR value[512];
 	pEdit->GetWindowTextW(edit, ((sizeof edit) -1 ));
 	n = wcstol(edit, NULL, current_base);
@@ -412,6 +433,9 @@ void Cwin_calc_mfcDlg::OnBnClickedButtonClear()
 {
 	// TODO: Add your control notification handler code here
 	((CEdit*)GetDlgItem(IDC_EDIT))->SetWindowTextW(_T("0"));
+	((CEdit*)GetDlgItem(IDC_DISPLAY))->SetWindowTextW(_T(""));
+	open_brackets = 0;
+	formula = _T("");
 }
 
 void Cwin_calc_mfcDlg::OnBnClickedButton0()
@@ -534,4 +558,102 @@ void Cwin_calc_mfcDlg::OnBnClickedButtonSign()
 		pEdit->SetWindowTextW(value);
 	}
 
+}
+
+
+void Cwin_calc_mfcDlg::OnBnClickedButtonLbracket()
+{
+	// TODO: Add your control notification handler code here
+	open_brackets++;
+	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_DISPLAY);
+	TCHAR edit[512];
+	pEdit->GetWindowTextW(edit, ((sizeof edit) -1 ));
+	wcscat(edit, _T("("));
+	pEdit->SetWindowTextW(edit);
+	op = FALSE;
+}
+
+
+void Cwin_calc_mfcDlg::OnBnClickedButtonRbracket2()
+{
+	// TODO: Add your control notification handler code here
+	if (open_brackets > 0)
+	{
+		open_brackets--;
+		DisplayOperator(_T(") "));
+	}
+}
+
+
+void Cwin_calc_mfcDlg::DisplayOperator(TCHAR *str)
+{
+	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_EDIT);
+	CEdit* pDisplay = (CEdit*)GetDlgItem(IDC_DISPLAY);
+	TCHAR edit[512];
+	TCHAR display[512];
+	int n = 0;
+	pEdit->GetWindowTextW(edit, ((sizeof edit) -1 ));
+	pDisplay->GetWindowTextW(display, ((sizeof display) -1));
+
+	if (eq == TRUE)
+	{
+		return;
+	}
+
+	if (op == FALSE)
+	{
+		wcscat(display, edit);
+		op = TRUE;
+	}
+	else // op == TRUE
+	{
+		if (display[0] != 0)
+		{
+			display[wcslen(display) - 1] = 0;
+		}
+	}
+	wcscat(display, str);
+	pDisplay->SetWindowTextW(display);
+	pEdit->SetWindowTextW(_T("0"));
+	n = wcstol(edit, NULL, current_base);
+	swprintf(edit, ((sizeof edit) - 1), _T("%d"), n);
+	formula += edit;
+}
+
+
+
+
+void Cwin_calc_mfcDlg::OnBnClickedButtonAdd()
+{
+	// TODO: Add your control notification handler code here
+	DisplayOperator(_T("+"));
+}
+
+void Cwin_calc_mfcDlg::OnBnClickedButtonMul()
+{
+	// TODO: Add your control notification handler code here
+	DisplayOperator(_T("*"));  
+}
+
+void Cwin_calc_mfcDlg::OnBnClickedButtonSub()
+{
+	// TODO: Add your control notification handler code here
+	DisplayOperator(_T("-"));
+}
+
+void Cwin_calc_mfcDlg::OnBnClickedButtonDiv()
+{
+	// TODO: Add your control notification handler code here
+	DisplayOperator(_T("/"));
+}
+
+void Cwin_calc_mfcDlg::OnBnClickedButtonEqual()
+{
+	// TODO: Add your control notification handler code here
+	DisplayOperator(_T("="));
+	eq = TRUE;
+
+	// do math here...
+
+	formula = _T("");
 }

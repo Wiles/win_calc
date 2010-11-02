@@ -11,6 +11,7 @@
 #define IDC_BUTTON_2                    1001
 #define IDC_BUTTON_3                    1002
 #define IDC_EDIT                        1003
+#define IDC_DISPLAY                     1004
 #define IDC_BUTTON_4                    1006
 #define IDC_BUTTON_5                    1007
 #define IDC_BUTTON_6                    1008
@@ -40,6 +41,10 @@
 #define IDC_BUTTON_D                    1032
 #define IDC_BUTTON_E                    1033
 #define IDC_BUTTON_F                    1034
+#define IDC_MENU_FILE                   1036
+#define IDC_MENU_EDIT                   1037
+#define IDC_MENU_HELP                   1038
+#define IDC_MENU_HELP2                  1039
 #define IDC_BASE_10                     1040
 #define IDC_BASE_3                      1041
 #define IDC_BASE_16                     1041
@@ -50,7 +55,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        129
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1036
+#define _APS_NEXT_CONTROL_VALUE         1037
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
